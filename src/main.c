@@ -9,6 +9,7 @@ void main()
     unsigned long int el;
     //get command
     int HELLO = 0;
+    int EXC = 0;
     //declare done
 
     // set up serial console
@@ -33,10 +34,15 @@ void main()
 		
         //which command
         HELLO = StrCmp(input, "hello", length, 5);
+        EXC = StrCmp(input, "exc", length, 3);
         //command detection done
 
 			
         if(HELLO == 1) uart_puts("\rHello World!\n");
+        else if(EXC == 1) 
+        {
+            sync_call();
+        }
         else if(length != 0)
         { 
             uart_puts("\rcommand  ");
