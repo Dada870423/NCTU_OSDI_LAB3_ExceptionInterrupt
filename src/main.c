@@ -3,6 +3,10 @@
 #include "../include/reboot.h"
 #include "../include/mbox.h"
 #include "../include/get_HW_info.h"
+
+extern void sync_call();
+extern void sync_vector_init();
+
 void main()
 {
     int i, length = 0;
@@ -15,6 +19,7 @@ void main()
     // set up serial console
     uart_init();
 
+    sync_vector_init();
     // welcome
     uart_puts("\r\nWelcome to Lab3\n");
     //declare and initial the command buffer
@@ -42,6 +47,7 @@ void main()
         else if(EXC == 1) 
         {
             sync_call();
+            //uart_puts("\rI am back!\n");
         }
         else if(length != 0)
         { 
