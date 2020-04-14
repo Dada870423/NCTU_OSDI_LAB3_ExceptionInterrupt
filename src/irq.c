@@ -22,17 +22,23 @@ const char *entry_error_messages[] = {
 	"FIQ_INVALID_EL0_32",		
 	"ERROR_INVALID_EL0_32"	
 };
-
-/*void enable_interrupt_controller()
+/*
+void enable_interrupt_controller()
 {
 	put32(ENABLE_IRQS_1, SYSTEM_TIMER_IRQ_1);
-}
+}*/
 
 void show_invalid_entry_message(int type, unsigned long esr, unsigned long address)
 {
-	printf("%s, ESR: %x, address: %x\r\n", entry_error_messages[type], esr, address);
+    uart_puts(entry_error_messages[type]);
+    uart_puts(", ESR: ");
+    uart_hex(esr);
+    uart_puts(", address: ");
+    uart_hex(address);
+    uart_puts("\r\n");
+	//printf("%s, ESR: %x, address: %x\r\n", entry_error_messages[type], esr, address);
 }
-*/
+
 void handle_irq(void)
 {
 /*	unsigned int irq = get32(IRQ_PENDING_1);

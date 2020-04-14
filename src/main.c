@@ -48,6 +48,10 @@ void main()
         {
             sync_call();
             //uart_puts("\rI am back!\n");
+            uart_puts("print the EL: ");
+            asm volatile ("mrs %0, CurrentEL" : "=r" (el));
+            uart_hex((el>>2)&3);
+            uart_puts("\r\n# ");
         }
         else if(length != 0)
         { 
