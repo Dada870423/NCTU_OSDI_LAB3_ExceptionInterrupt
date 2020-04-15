@@ -19,7 +19,7 @@ void main()
     // set up serial console
     uart_init();
 
-    sync_vector_init();
+    //sync_vector_init();
     // welcome
     uart_puts("\r\nWelcome to Lab3\n");
     //declare and initial the command buffer
@@ -27,8 +27,8 @@ void main()
     for(i=0;i<100;i++) input[i] = '0';
     //read the current level
     uart_puts("current EL: ");
-    asm volatile ("mrs %0, CurrentEL" : "=r" (el));
-    uart_hex((el>>2)&3);
+    //asm volatile ("mrs %0, CurrentEL" : "=r" (el));
+    //uart_hex((el>>2)&3);
     uart_puts("\r\n# ");
     //
     for(;;)
@@ -48,9 +48,9 @@ void main()
         {
             sync_call();
             //uart_puts("\rI am back!\n");
-            uart_puts("print the EL: ");
-            asm volatile ("mrs %0, CurrentEL" : "=r" (el));
-            uart_hex((el>>2)&3);
+            uart_puts("print the EL:(exc) ");
+            //asm volatile ("mrs %0, CurrentEL" : "=r" (el));
+            //uart_hex((el>>2)&3);
             uart_puts("\r\n# ");
         }
         else if(length != 0)
