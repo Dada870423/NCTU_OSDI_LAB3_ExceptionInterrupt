@@ -153,6 +153,7 @@ void sync_el0_64_handler(int x0, int x1, int x2, int x3, int x4, int x5){
 
 void show_invalid_entry_message(int type, unsigned long esr, unsigned long address)
 {
+/*
     uart_puts(entry_error_messages[type]);
     uart_puts(", ESR: ");
     uart_hex(esr);
@@ -160,6 +161,37 @@ void show_invalid_entry_message(int type, unsigned long esr, unsigned long addre
     uart_hex(address);
     uart_puts("\r\n");
 	//printf("%s, ESR: %x, address: %x\r\n", entry_error_messages[type], esr, address);
+*/
+	char buf_address[100];
+	char buf_ec[100];
+	char buf_iss[100];
+	unsigned int currentel;
+	char buf[100];
+
+	itoa(address, buf_address, 10);
+    uart_puts("Exception return address: 0x");
+    //uart_puts(buf_address);
+    uart_hex(address);
+    uart_puts("\n");
+
+	itoa((esr & 0xFC000000) >> 26, buf_ec, 10);
+	uart_puts("Exception class (EC): 0x");
+    //uart_puts(buf_ec);
+	uart_hex((esr & 0xFC000000) >> 26);
+    uart_puts("\n");
+
+	itoa((esr & 0x01FFFFFF), buf_iss, 10);
+	uart_puts("Instruction specific syndrome (ISS): 0x");
+    //uart_puts(buf_iss);
+	uart_hex((esr & 0x01FFFFFF));
+    uart_puts("\n");
+
+	asm volatile("mrs %0, CurrentEL\n" : "=r"(currentel));
+	currentel = currentel >> 2;
+	itoa(currentel, buf, 10);
+	uart_puts("CURRENT EXCEPTION LEVEL: ");
+	uart_puts(buf);
+	uart_puts("\n");
 }
 
 void handle_irq(void)

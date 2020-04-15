@@ -1,8 +1,8 @@
 #OSDI LAB 2 
 
 CC = aarch64-linux-gnu
-CFLAGS = -fPIC -Include -Wall -O2 -ffreestanding -nostdinc -nostdlib -nostartfiles -mgeneral-regs-only
-ASMOPS = -fPIC -Iinclude
+CFLAGS = -ggdb -fPIC -Include -Wall -ffreestanding -nostdinc -nostdlib -nostartfiles -mgeneral-regs-only
+ASMOPS = -ggdb -fPIC -Iinclude
 all: kernel8.img
 
 
@@ -26,12 +26,14 @@ OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 
 kernel8.img: ${SRC_DIR}/link.ld ${OBJ_FILES} obj/start.o 
-	${CC}-ld -Iinclude -T ${SRC_DIR}/link.ld -o ${BUILD_DIR}/kernel8.elf obj/start.o obj/IRQ.o obj/entry.o obj/SYS.o  ${OBJ_FILES}
+	${CC}-ld -Iinclude -T ${SRC_DIR}/link.ld -o ${BUILD_DIR}/kernel8.elf obj/start.o obj/IRQ.o obj/entry.o obj/SYS.o  ${OBJ_FILES} -Map System.map
 	${CC}-objcopy -O binary ${BUILD_DIR}/kernel8.elf kernel8.img
 
 clean:
 	rm -f kernel8.elf
 	rm -f obj/*
+debug:
+	qemu-system-aarch64 -M raspi3 -kernel kernel8.img -display none -gdb tcp::8888 -S
 
 run:
 	qemu-system-aarch64 -M raspi3 -kernel kernel8.img -serial stdio 

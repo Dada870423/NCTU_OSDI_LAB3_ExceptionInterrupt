@@ -24,6 +24,7 @@ void main()
     uart_puts("\r\nWelcome to Lab3\n");
     //declare and initial the command buffer
     char input[100];
+	asm volatile("svc #1");	
     for(i=0;i<100;i++) input[i] = '0';
     //read the current level
     uart_puts("current EL: ");
