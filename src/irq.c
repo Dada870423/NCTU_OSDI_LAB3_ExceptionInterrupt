@@ -2,7 +2,7 @@
 #include "../include/uart.h"
 #include "../include/irq.h"
 #include "../include/peripherals.h"
-#include "../include/peripherals.h"
+#include "../include/tool.h"
 
 
 const char *entry_error_messages[] = {
@@ -35,8 +35,8 @@ void enable_interrupt_controller()
 
 
 void print_system_registers(){
-	unsigned int elr_el1, elr_el2, elr_el3;
-	unsigned int esr_el1, esr_el2, esr_el3;
+	unsigned int elr_el1; //, elr_el2, elr_el3;
+	unsigned int esr_el1; //, esr_el2, esr_el3;
 	unsigned int currentel, daif, nzcv, spsel;	
 
 	char buf[100];

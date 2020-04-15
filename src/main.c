@@ -10,7 +10,7 @@ extern void sync_vector_init();
 void main()
 {
     int i, length = 0;
-    unsigned long int el;
+    //unsigned long int el;
     //get command
     int HELLO = 0;
     int EXC = 0;

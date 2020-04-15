@@ -7,5 +7,5 @@ sync_vector_init:
 
 .globl sync_call
 sync_call:
-    svc #1
+    svc #3
     ret

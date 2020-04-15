@@ -67,7 +67,7 @@ vectors:
 	ventry	fiq_invalid_el1t			// FIQ EL1t
 	ventry	error_invalid_el1t			// Error EL1t
 
-	ventry	sync_invalid_el1h			// Synchronous EL1h
+	ventry	sync_invalid_el0_64     // sync_invalid_el1h			// Synchronous EL1h
 	ventry	el1_irq					// IRQ EL1h
 	ventry	fiq_invalid_el1h			// FIQ EL1h
 	ventry	error_invalid_el1h			// Error EL1h
