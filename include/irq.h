@@ -17,4 +17,10 @@ void enable_irq(void);
 void disable_irq(void);
 void svc_call_1(void);
 
+
+//sajochiu
+void irq_cmd(void);
+
+
+
 #endif  /*_IRQ_H */

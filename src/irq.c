@@ -4,33 +4,16 @@
 #include "../include/peripherals.h"
 #include "../include/tool.h"
 
-
-const char *entry_error_messages[] = {
-	"SYNC_INVALID_EL1t",
-	"IRQ_INVALID_EL1t",		
-	"FIQ_INVALID_EL1t",		
-	"ERROR_INVALID_EL1T",		
-
-	"SYNC_INVALID_EL1h",		
-	"IRQ_INVALID_EL1h",		
-	"FIQ_INVALID_EL1h",		
-	"ERROR_INVALID_EL1h",		
-
-	"SYNC_INVALID_EL0_64",		
-	"IRQ_INVALID_EL0_64",		
-	"FIQ_INVALID_EL0_64",		
-	"ERROR_INVALID_EL0_64",	
-
-	"SYNC_INVALID_EL0_32",		
-	"IRQ_INVALID_EL0_32",		
-	"FIQ_INVALID_EL0_32",		
-	"ERROR_INVALID_EL0_32"	
-};
-/*
-void enable_interrupt_controller()
+void irq_cmd()
 {
-	put32(ENABLE_IRQS_1, SYSTEM_TIMER_IRQ_1);
-}*/
+    local_timer_init();
+    asm volatile("sub sp, sp, 8");
+    asm volatile("str x8, [sp, #8]");
+    asm volatile("mov x8, #1");	// #1
+    asm volatile("svc #0");	// arm system call
+    asm volatile("ldr x8, [sp, #8]");
+    asm volatile("add sp, sp, 8");
+}
 
 
 
@@ -83,49 +66,19 @@ void print_system_registers(){
 	uart_puts("\n");
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void system_call(unsigned int syscall_number){
 
-	/*if(syscall_number == 1){	// core timer enable
+	if(syscall_number == 1){	// core timer enable
 		core_timer_enable();
 	}else if(syscall_number == 2){
 		uart_puts("system call 2 test\n");	
-	}else*/ if(syscall_number == 3){
+	}else if(syscall_number == 3){
 		print_system_registers();
 	}else{
 		uart_puts("no such system call number!\n");
 	}
 	return;
 }
-
-
-
-
-
-
-
 
 void sync_el0_64_handler(int x0, int x1, int x2, int x3, int x4, int x5){
 
@@ -153,15 +106,6 @@ void sync_el0_64_handler(int x0, int x1, int x2, int x3, int x4, int x5){
 
 void show_invalid_entry_message(int type, unsigned long esr, unsigned long address)
 {
-/*
-    uart_puts(entry_error_messages[type]);
-    uart_puts(", ESR: ");
-    uart_hex(esr);
-    uart_puts(", address: ");
-    uart_hex(address);
-    uart_puts("\r\n");
-	//printf("%s, ESR: %x, address: %x\r\n", entry_error_messages[type], esr, address);
-*/
 	char buf_address[100];
 	char buf_ec[100];
 	char buf_iss[100];

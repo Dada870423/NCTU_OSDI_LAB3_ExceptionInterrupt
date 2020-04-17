@@ -3,9 +3,10 @@
 #include "../include/reboot.h"
 #include "../include/mbox.h"
 #include "../include/get_HW_info.h"
+#include "../include/irq.h"
+#include "../include/timer.h"
 
 extern void sync_call();
-extern void sync_vector_init();
 
 void main()
 {
@@ -14,12 +15,12 @@ void main()
     //get command
     int HELLO = 0;
     int EXC = 0;
+    int IRQ = 0;
     //declare done
 
     // set up serial console
     uart_init();
 
-    //sync_vector_init();
     // welcome
     uart_puts("\r\nWelcome to Lab3\n");
     //declare and initial the command buffer
@@ -27,11 +28,6 @@ void main()
 	asm volatile("svc #1");	
     for(i=0;i<100;i++) input[i] = '0';
     //read the current level
-    uart_puts("current EL: ");
-    //asm volatile ("mrs %0, CurrentEL" : "=r" (el));
-    //uart_hex((el>>2)&3);
-    uart_puts("\r\n# ");
-    //
     for(;;)
     {
         length = ReadLine(input);
@@ -48,11 +44,12 @@ void main()
         else if(EXC == 1) 
         {
             sync_call();
-            //uart_puts("\rI am back!\n");
             uart_puts("print the EL:(exc) ");
-            //asm volatile ("mrs %0, CurrentEL" : "=r" (el));
-            //uart_hex((el>>2)&3);
             uart_puts("\r\n# ");
+        }
+        else if(IRQ == 1)
+        {
+            irq_cmd();
         }
         else if(length != 0)
         { 
@@ -68,5 +65,6 @@ void main()
         for(i=0;i<100;i++) input[i] = '0';
         length = 0;
         HELLO = 0;
+        IRQ = 0;
     }
 }
