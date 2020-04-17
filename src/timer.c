@@ -1,6 +1,11 @@
 #include "../include/timer.h"
 
 
+
+
+#define LOCAL_TIMER_CONTROL_AND_STATUS	0x40000034
+#define LOCAL_TIMER_IRQ_CLR				0x40000038
+
 void local_timer_init(){
 	// enable timer and interrupt.
 	

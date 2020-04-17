@@ -1,4 +1,5 @@
 #include "../include/entry.h"
+#include "../include/timer.h"
 
 	.macro handle_invalid_entry type
 	kernel_entry
@@ -109,7 +110,11 @@ sync_invalid_el0_64:
 	bl sync_el0_64_handler	//	svc handler
 	kernel_exit		        // load general registers
 irq_invalid_el0_64:
-	handle_invalid_entry  IRQ_INVALID_EL0_64
+	kernel_entry	        // store general registers
+	bl disable_irq	        // src/IRQ.S
+	bl irq_el0_64_handler	// timer handler
+	bl enable_irq	        // src/IRQ.S
+	kernel_exit		        // store general registers
 
 fiq_invalid_el0_64:
 	handle_invalid_entry  FIQ_INVALID_EL0_64
