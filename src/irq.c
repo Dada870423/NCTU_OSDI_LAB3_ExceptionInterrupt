@@ -4,6 +4,11 @@
 #include "../include/peripherals.h"
 #include "../include/tool.h"
 #include "../include/timer.h"
+//#include "../include/TIMERS.h"
+
+
+extern void core_timer_handler();
+extern void core_timer_enable();
 
 void irq_cmd()
 {
@@ -26,7 +31,7 @@ void irq_el0_64_handler()
     unsigned int IRQ_SOURCE = *((volatile unsigned int*)CORE0_IRQ_SOURCE);
 
     // bit 1: CNTPNSIRQ interrupt
-	if(IRQ_SOURCE == 0x00000002)	// core timer IRQ_SOURCE: 2
+    if(IRQ_SOURCE == 0x00000002)	// core timer IRQ_SOURCE: 2
     {
         core_timer_handler();
         uart_puts("Core timer interrupt, jiffies ");
@@ -36,18 +41,18 @@ void irq_el0_64_handler()
 
         core_timer_number++;
         return;	
-	}
+    }
 
     // bit 11: Local timer interrupt
-	if(IRQ_SOURCE == 0x00000800)	// local timer IRQ_SOURCE: 2048
+    if(IRQ_SOURCE == 0x00000800)	// local timer IRQ_SOURCE: 2048
     {    
         local_timer_handler();
-	    uart_puts("Local timer interrupt, jiffies ");
+        uart_puts("Local timer interrupt, jiffies ");
         itoa(local_timer_number, buf_local_timer_number, 10);
         uart_puts(buf_local_timer_number);
         uart_puts("\n");
         local_timer_number++;
-	    return;
+        return;
     }
 }
 

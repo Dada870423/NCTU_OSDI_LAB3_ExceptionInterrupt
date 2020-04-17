@@ -1,7 +1,3 @@
-#include "../include/timer.h"
-
-
-
 .global core_timer_enable
 core_timer_enable:
     mov x0, 1
