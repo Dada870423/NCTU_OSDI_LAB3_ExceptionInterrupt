@@ -30,16 +30,15 @@ void print_system_registers(){
 	//uart_puts(buf);
 	uart_hex(elr_el1);
 	uart_puts("\n");
-/*
-*/
+
 	asm volatile("mrs %0, esr_el1\n" : "=r"(esr_el1));
 	itoa(esr_el1, buf, 10);
 	uart_puts("ESR_EL1: 0x");
 	//uart_puts(buf);
 	uart_hex(esr_el1);
 	uart_puts("\n");
-/*
-*/
+
+
 	asm volatile("mrs %0, CurrentEL\n" : "=r"(currentel));
 	currentel = currentel >> 2;
 	itoa(currentel, buf, 10);
@@ -68,74 +67,83 @@ void print_system_registers(){
 }
 void system_call(unsigned int syscall_number){
 
-	if(syscall_number == 1){	// core timer enable
+	if(syscall_number == 1) // core timer enable
+    {	
 		core_timer_enable();
-	}else if(syscall_number == 2){
+	}
+    else if(syscall_number == 2)
+    {
 		uart_puts("system call 2 test\n");	
-	}else if(syscall_number == 3){
+	}
+    else if(syscall_number == 3)
+    {
 		print_system_registers();
-	}else{
+	}
+    else
+    {
 		uart_puts("no such system call number!\n");
 	}
 	return;
 }
 
-void sync_el0_64_handler(int x0, int x1, int x2, int x3, int x4, int x5){
+void sync_el0_64_handler(int x0, int x1, int x2, int x3, int x4, int x5)
+{
+    unsigned int elr_el1;
+    unsigned int esr_el1;
+    unsigned int syscall_number;
 
-	unsigned int elr_el1;
-	unsigned int esr_el1;
-	unsigned int syscall_number;
+    // read the system call number
+    asm volatile("mrs %0, elr_el1\n" : "=r"(elr_el1));	// exception return address
+    asm volatile("mrs %0, esr_el1\n" : "=r"(esr_el1));	// read the exception class
+    asm volatile("mov %0, x8\n" : "=r"(syscall_number));	// system call number is saved in x8 register
 
-	// read the system call number
-	asm volatile("mrs %0, elr_el1\n" : "=r"(elr_el1));	// exception return address
-	asm volatile("mrs %0, esr_el1\n" : "=r"(esr_el1));	// read the exception class
-	asm volatile("mov %0, x8\n" : "=r"(syscall_number));	// system call number is saved in x8 register
-
-	if(( (esr_el1 & 0xFC000000) >> 26) == 0x15){	// SVC instruction execution in AArch64 state
-		if(!(esr_el1 & 0x00000FFF)){	// 
-			system_call(syscall_number);
-			return;
-		}else{
-			show_invalid_entry_message(-1, esr_el1, elr_el1);
-		}
-	}else{
-		// pass
-	}
+    if(( (esr_el1 & 0xFC000000) >> 26) == 0x15)	// SVC instruction execution in AArch64 state
+    {	
+        if(!(esr_el1 & 0x00000FFF))
+        { 
+            system_call(syscall_number);
+            return;
+        }
+        else
+        {
+            show_invalid_entry_message(-1, esr_el1, elr_el1);
+        }
+    }
 }
 
 
 void show_invalid_entry_message(int type, unsigned long esr, unsigned long address)
 {
-	char buf_address[100];
-	char buf_ec[100];
-	char buf_iss[100];
-	unsigned int currentel;
-	char buf[100];
+    char buf_address[100];
+    char buf_ec[100];
+    char buf_iss[100];
+    unsigned int currentel;
+    char buf[100];
 
-	itoa(address, buf_address, 10);
+    itoa(address, buf_address, 10);
     uart_puts("Exception return address: 0x");
     //uart_puts(buf_address);
     uart_hex(address);
     uart_puts("\n");
 
-	itoa((esr & 0xFC000000) >> 26, buf_ec, 10);
-	uart_puts("Exception class (EC): 0x");
+    itoa((esr & 0xFC000000) >> 26, buf_ec, 10);
+    uart_puts("Exception class (EC): 0x");
     //uart_puts(buf_ec);
-	uart_hex((esr & 0xFC000000) >> 26);
+    uart_hex((esr & 0xFC000000) >> 26);
     uart_puts("\n");
 
-	itoa((esr & 0x01FFFFFF), buf_iss, 10);
-	uart_puts("Instruction specific syndrome (ISS): 0x");
+    itoa((esr & 0x01FFFFFF), buf_iss, 10);
+    uart_puts("Instruction specific syndrome (ISS): 0x");
     //uart_puts(buf_iss);
-	uart_hex((esr & 0x01FFFFFF));
+    uart_hex((esr & 0x01FFFFFF));
     uart_puts("\n");
 
-	asm volatile("mrs %0, CurrentEL\n" : "=r"(currentel));
-	currentel = currentel >> 2;
-	itoa(currentel, buf, 10);
-	uart_puts("CURRENT EXCEPTION LEVEL: ");
-	uart_puts(buf);
-	uart_puts("\n");
+    asm volatile("mrs %0, CurrentEL\n" : "=r"(currentel));
+    currentel = currentel >> 2;
+    itoa(currentel, buf, 10);
+    uart_puts("CURRENT EXCEPTION LEVEL: ");
+    uart_puts(buf);
+    uart_puts("\n");
 }
 
 void handle_irq(void)

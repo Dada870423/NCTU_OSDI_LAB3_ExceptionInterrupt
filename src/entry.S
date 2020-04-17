@@ -105,11 +105,9 @@ error_invalid_el1h:
 
 
 sync_invalid_el0_64:
-	//bl test_handler_sync_invalid_el0_64
-	
-	kernel_entry	// store general registers
+	kernel_entry	        // store general registers
 	bl sync_el0_64_handler	//	svc handler
-	kernel_exit		// load general registers
+	kernel_exit		        // load general registers
 irq_invalid_el0_64:
 	handle_invalid_entry  IRQ_INVALID_EL0_64
 
