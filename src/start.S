@@ -1,6 +1,6 @@
 #include "../include/peripherals.h"
 #include "../include/mm.h"
-#include "../include/timer.h"
+//#include "../include/timer.h"
 
 .section ".text.boot"
 
