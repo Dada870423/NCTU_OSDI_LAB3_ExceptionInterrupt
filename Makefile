@@ -10,13 +10,9 @@ all: kernel8.img
 SRC_DIR = src
 BUILD_DIR = obj
 
-obj/start.o: src/start.S src/IRQ.S src/entry.S src/SYS.S src/TIMER.S
-	${CC}-gcc ${ASMOPS} -c src/TIMER.S -o obj/TIMER.o
-	${CC}-gcc ${ASMOPS} -c src/start.S -o obj/start.o
-	${CC}-gcc ${ASMOPS} -c src/IRQ.S -o obj/IRQ.o
-	${CC}-gcc ${ASMOPS} -c src/entry.S -o obj/entry.o
-	${CC}-gcc ${ASMOPS} -c src/SYS.S -o obj/SYS.o
 
+${BUILD_DIR}/%.o: ${SRC_DIR}/%.S
+	${CC}-gcc ${ASMOPS} -c $< -o $@
 
 
 ${BUILD_DIR}/%.o: ${SRC_DIR}/%.c
@@ -24,10 +20,10 @@ ${BUILD_DIR}/%.o: ${SRC_DIR}/%.c
 
 C_FILES = $(wildcard $(SRC_DIR)/*.c)
 OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
-
+S_OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.S=$(BUILD_DIR)/%.o)
 
 kernel8.img: ${SRC_DIR}/link.ld ${OBJ_FILES} obj/start.o 
-	${CC}-ld -Iinclude -T ${SRC_DIR}/link.ld -o ${BUILD_DIR}/kernel8.elf obj/start.o obj/IRQ.o obj/entry.o obj/SYS.o obj/TIMER.o ${OBJ_FILES} -Map System.map
+	${CC}-ld -Iinclude -T ${SRC_DIR}/link.ld -o ${BUILD_DIR}/kernel8.elf ${S_OBJ_FILES}  ${OBJ_FILES} -Map System.map
 	${CC}-objcopy -O binary ${BUILD_DIR}/kernel8.elf kernel8.img
 
 clean:
