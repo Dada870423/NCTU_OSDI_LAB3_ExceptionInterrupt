@@ -37,6 +37,7 @@ void main()
         //which command
         HELLO = StrCmp(input, "hello", length, 5);
         EXC = StrCmp(input, "exc", length, 3);
+        IRQ = StrCmp(input, "irq", length, 3);
         //command detection done
 
 			

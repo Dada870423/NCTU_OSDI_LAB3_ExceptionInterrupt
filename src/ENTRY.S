@@ -1,5 +1,4 @@
 #include "../include/entry.h"
-#include "../include/timer.h"
 
 	.macro handle_invalid_entry type
 	kernel_entry
